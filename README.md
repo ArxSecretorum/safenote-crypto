@@ -54,6 +54,12 @@ Lock PIN     ──Argon2id(salt)──► verification hash           (one-way,
 One secret is never reused directly across two cryptosystems: working keys are independent
 HKDF subkeys with distinct domain labels.
 
+> **Note — the `app.safenote/*` labels are frozen (not a branding leftover).** The `app.safenote/…`
+> prefix in the HKDF domain labels (and the `safenote_master_key` Keystore alias) is a
+> **backward-compatibility identifier, not a branding string** — it is intentionally *not* renamed
+> to `arxnotes`. Changing these values would derive different keys / orphan the wrap key and make
+> existing encrypted data unreadable; they may change only via a versioned migration (e.g. `/v2`).
+
 ## Parameters
 
 - **Symmetric:** AES-256-GCM, 96-bit nonce, 128-bit tag. Authenticated encryption only — no unauthenticated mode anywhere.

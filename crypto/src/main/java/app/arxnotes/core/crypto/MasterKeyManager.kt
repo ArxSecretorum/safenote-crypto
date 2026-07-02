@@ -145,12 +145,22 @@ class MasterKeyManager(private val context: Context) {
 
     private companion object {
         const val ANDROID_KEYSTORE = "AndroidKeyStore"
+
+        // FROZEN — НЕ ПЕРЕИМЕНОВЫВАТЬ. Это alias записи в Android Keystore, а НЕ имя приложения.
+        // «safenote» здесь — исторический непрозрачный идентификатор, не бренд; его текст НЕ обязан
+        // совпадать с «Arx Notes». Смена значения ⇒ приложение не найдёт уже созданный ключ-обёртку
+        // ⇒ мастер-секрет и все данные пользователя станут недоступны. Не «чистить» под ребрендинг.
         const val KEY_ALIAS = "safenote_master_key"
+
         const val BLOB_FILENAME = "master_key.bin"
         const val KEY_BYTES = 32         // 256 бит
         const val BLOB_VERSION: Byte = 1 // версия формата обёртки мастер-секрета
 
-        // Доменные метки HKDF — менять нельзя без миграции (изменят подключи).
+        // FROZEN — НЕ ПЕРЕИМЕНОВЫВАТЬ. Доменные метки HKDF (domain separation), а НЕ бренд.
+        // «safenote» здесь — фиксированная строка-константа; её байты входят в деривацию подключей
+        // БД/аудио. Смена ⇒ выведутся ДРУГИЕ ключи ⇒ уже зашифрованные БД и аудио не расшифруются.
+        // Менять допустимо ТОЛЬКО через миграцию с бампом версии (напр. «/v2»: читать старым ключом
+        // → перешифровать новым). Не трогать ради совпадения с брендом.
         val INFO_DB = "app.safenote/db/v1".toByteArray(Charsets.US_ASCII)
         val INFO_AUDIO = "app.safenote/audio/v1".toByteArray(Charsets.US_ASCII)
     }
